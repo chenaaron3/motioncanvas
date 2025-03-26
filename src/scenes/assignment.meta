@@ -1,0 +1,50 @@
+{
+  "version": 0,
+  "timeEvents": [
+    {
+      "name": "Variables Intro",
+      "targetTime": 2.386280814576633
+    },
+    {
+      "name": "Lets Go Intro",
+      "targetTime": 4.112540192926044
+    },
+    {
+      "name": "Value Intro",
+      "targetTime": 11.362895759227783
+    },
+    {
+      "name": "Assignment Intro",
+      "targetTime": 15.53909478386474
+    },
+    {
+      "name": "Read RL",
+      "targetTime": 18.421018693941452
+    },
+    {
+      "name": "Highlight 1",
+      "targetTime": 20.780787976064435
+    },
+    {
+      "name": "Highlight =",
+      "targetTime": 21.51131451207019
+    },
+    {
+      "name": "Highlight x",
+      "targetTime": 23.152212027020727
+    },
+    {
+      "name": "Leftover Example",
+      "targetTime": 25.646579695304354
+    },
+    {
+      "name": "Move Food",
+      "targetTime": 28.57405567572749
+    },
+    {
+      "name": "Invalid Food",
+      "targetTime": 34.18655567572749
+    }
+  ],
+  "seed": 3930227486
+}
