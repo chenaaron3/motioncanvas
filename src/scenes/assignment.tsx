@@ -11,6 +11,8 @@ import Success from '../assets/images/success.jpg';
 import Tupperware from '../assets/images/tupperware.png';
 import { Check } from '../components/Check';
 import { Cross } from '../components/Cross';
+import { Expression } from '../components/Expression';
+import { Variable } from '../components/Variable';
 import { Colors } from '../utils/utils';
 
 export default makeScene2D(function* (view) {
@@ -20,9 +22,8 @@ export default makeScene2D(function* (view) {
     const body = Code.createSignal(CODE`x = ${value}`);
 
     const txtRef = createRef<Txt>();
-    const x = createRef<Code>();
-    const box = createRef<Rect>();
-    const valueRef = createRef<Code>();
+    const variableRef = createRef<Variable>();
+    const valueRef = createRef<Expression>();
     const codeRef = createRef<Code>();
     const tupperwareRef = createRef<Img>();
     const potatoRef = createRef<Img>();
@@ -35,16 +36,8 @@ export default makeScene2D(function* (view) {
                 code={CODE`${body}`}
                 opacity={0}
             />
-            <Rect
-                ref={box}
-                stroke={"white"}
-                lineWidth={5}
-                size={100}
-                opacity={0}
-            >
-                <Code ref={x} fill={"white"} code={"x"}></Code>
-            </Rect>
-            <Code ref={valueRef} code={CODE`${value}`} opacity={0}></Code>
+            <Variable ref={variableRef} />
+            <Expression ref={valueRef} code={CODE`${value}`} opacity={0}></Expression>
             <Img ref={tupperwareRef} size={250} src={Tupperware} opacity={0}>
                 <Txt text="Variable" y={125} fill={Colors.Variable}></Txt>
             </Img>
@@ -64,19 +57,15 @@ export default makeScene2D(function* (view) {
     );
 
     // Display empty box
-    x().bottom(box().top().addY(0));
-    yield* box().opacity(1, 1);
+    yield* variableRef().declare("x");
 
     // Introduce value and assigment
     yield* waitUntil("Value Intro");
-    valueRef().position(box().right().addX(100));
+    valueRef().position(variableRef().right().addX(100));
     yield* valueRef().opacity(1, 1);
 
     // Draw arrow, then move box
-    yield* arrowMove(view, valueRef, box);
-    // Make the value a child of the box
-    box().add(valueRef());
-    valueRef().position([0, 0], 0);
+    yield* variableRef().assign(valueRef());
 
     // Show code
     yield* waitUntil("Assignment Intro");
@@ -107,7 +96,7 @@ export default makeScene2D(function* (view) {
     // Show pattern
     yield* waitUntil("Leftover Example");
     yield* all(
-        box().opacity(0, 1)
+        variableRef().opacity(0, 1)
     )
 
     // Explain direction with an example

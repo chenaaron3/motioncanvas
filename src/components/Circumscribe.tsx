@@ -1,37 +1,62 @@
-import { Circle, is, Layout, Node, Rect } from '@motion-canvas/2d';
-import { all, PossibleColor, SignalValue, unwrap, useLogger, waitFor } from '@motion-canvas/core';
+import {
+    Circle, is, Layout, Node, NodeProps, PossibleCanvasStyle, Rect, signal
+} from '@motion-canvas/2d';
+import {
+    all, BBox, createEffect, PossibleColor, SignalValue, SimpleSignal, ThreadGenerator, unwrap,
+    useLogger, waitFor
+} from '@motion-canvas/core';
 
-export function* CircumscribeRect(
-    nodeOrRef: SignalValue<Layout>,
-    color: PossibleColor,
-    scale: number = 1.1,
-    lineWidth: number = 5,
-    holdSecs: number = 0
-) {
-    const node = unwrap(nodeOrRef);
-    const rect = new Rect({
-        layout: false,
-        lineWidth: lineWidth,
-        stroke: color,
-        end: 0,
-        position: node.position,
-        zIndex: 11000
-    });
-    const width = node.cacheBBox().width;
-    const height = node.cacheBBox().height;
-    rect.width(width * scale);
-    rect.height(height * scale);
-    const parent = node.findAncestor(is(Node));
-    if (parent === null) {
-        useLogger().debug("Returning");
-        return;
+export interface CircumscribeProps extends NodeProps {
+    target: SignalValue<Layout>
+}
+
+export class Circumscribe extends Node {
+    @signal()
+    public declare readonly target: SignalValue<Layout>
+    private rect: Rect
+
+    constructor(props: CircumscribeProps) {
+        super(props)
     }
-    parent.add(rect);
-    rect.moveToTop()
-    yield* rect.end(1, 1);
-    yield* waitFor(holdSecs);
-    yield* rect.start(1, 1);
-    rect.remove();
+
+    *create(
+        color: PossibleColor,
+        scale: number = 1.1,
+        lineWidth: number = 5,
+    ): ThreadGenerator {
+        const node = unwrap(this.target);
+        const rect = new Rect({
+            layout: false,
+            lineWidth: lineWidth,
+            stroke: color,
+            end: 0,
+            position: node.position,
+            radius: 8,
+            zIndex: 11000
+        });
+        // sync the rectangle size to the target node
+        createEffect(() => {
+            const width = node.cacheBBox().width;
+            const height = node.cacheBBox().height;
+            rect.width(width * scale);
+            rect.height(height * scale);
+        });
+        const parent = node.findAncestor(is(Node));
+        if (parent === null) {
+            useLogger().debug("Returning");
+            return;
+        }
+        parent.add(rect);
+        rect.moveToTop()
+        yield* rect.end(1, 1);
+        this.rect = rect;
+    }
+
+    *destroy(): ThreadGenerator {
+        // How can we change the bb of the rectangle to be the same as the target?
+        yield* this.rect.start(1, 1);
+        this.rect.remove();
+    }
 }
 
 export function* CircumscribeCircle(

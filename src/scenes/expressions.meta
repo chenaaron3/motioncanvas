@@ -1,5 +1,26 @@
 {
   "version": 0,
-  "timeEvents": [],
+  "timeEvents": [
+    {
+      "name": "Values",
+      "targetTime": 7.657737503618599
+    },
+    {
+      "name": "Operators",
+      "targetTime": 8.657737503618598
+    },
+    {
+      "name": "Evaluate",
+      "targetTime": 11.470469177997876
+    },
+    {
+      "name": "Accentuate",
+      "targetTime": 14.269788727958357
+    },
+    {
+      "name": "Operator Deck",
+      "targetTime": 32.73695065303666
+    }
+  ],
   "seed": 3623793
 }
