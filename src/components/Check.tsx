@@ -3,6 +3,9 @@ import {
     all, createRef, createSignal, delay, linear, Reference, SimpleSignal, ThreadGenerator
 } from '@motion-canvas/core';
 
+import { Colors } from '../utils/utils';
+import { SoundEffects } from './SoundEffects';
+
 export class Check extends Rect {
     private circleRef: Reference<Circle>
     private checkRef: Reference<Line>
@@ -11,6 +14,7 @@ export class Check extends Rect {
 
     constructor(props: RectProps) {
         const checkSize = 3;
+        const color = Colors.Green;
         super(props);
         this.circleProgress = createSignal(0);
         this.checkProgress = createSignal(0);
@@ -20,7 +24,7 @@ export class Check extends Rect {
             <Circle
                 ref={this.circleRef}
                 size={100} // Diameter of the circle
-                stroke="00C853" // Color of the circle
+                stroke={color} // Color of the circle
                 lineWidth={10} // Width of the circle
                 startAngle={-90}
                 endAngle={-90}
@@ -32,7 +36,7 @@ export class Check extends Rect {
             >
                 <Line
                     ref={this.checkRef}
-                    stroke={'#00C853'}
+                    stroke={color}
                     lineWidth={10}
                     points={() => [
                         [checkSize, -4 * checkSize],
@@ -48,6 +52,7 @@ export class Check extends Rect {
     }
 
     *animate(duration: number): ThreadGenerator {
+        SoundEffects.good();
         yield* all(
             // Start circle animation
             this.circleProgress(1, .5 * duration, linear),

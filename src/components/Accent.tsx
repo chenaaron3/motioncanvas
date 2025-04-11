@@ -16,8 +16,8 @@ export class Accent extends Node {
     *start(): ThreadGenerator {
         const node = unwrap(this.target);
         yield* all(
-            node.scale(2, .25).to(1, .25),
-            node.rotation(5, .125).to(-5, .125).to(0, .25)
+            node.scale(1.5, .5).to(1, .5),
+            node.rotation(5, .3).to(-5, .3).to(0, .3)
         )
     }
 }

@@ -53,9 +53,9 @@ export class Circumscribe extends Node {
     }
 
     *destroy(): ThreadGenerator {
-        // How can we change the bb of the rectangle to be the same as the target?
         yield* this.rect.start(1, 1);
-        this.rect.remove();
+        this.rect.opacity(0);
+        // this.rect.remove();
     }
 }
 

@@ -12,6 +12,7 @@ import Tupperware from '../assets/images/tupperware.png';
 import { Check } from '../components/Check';
 import { Cross } from '../components/Cross';
 import { Expression } from '../components/Expression';
+import { SoundEffects } from '../components/SoundEffects';
 import { Variable } from '../components/Variable';
 import { Colors } from '../utils/utils';
 
@@ -23,7 +24,6 @@ export default makeScene2D(function* (view) {
 
     const txtRef = createRef<Txt>();
     const variableRef = createRef<Variable>();
-    const valueRef = createRef<Expression>();
     const codeRef = createRef<Code>();
     const tupperwareRef = createRef<Img>();
     const potatoRef = createRef<Img>();
@@ -37,7 +37,6 @@ export default makeScene2D(function* (view) {
                 opacity={0}
             />
             <Variable ref={variableRef} />
-            <Expression ref={valueRef} code={CODE`${value}`} opacity={0}></Expression>
             <Img ref={tupperwareRef} size={250} src={Tupperware} opacity={0}>
                 <Txt text="Variable" y={125} fill={Colors.Variable}></Txt>
             </Img>
@@ -48,27 +47,26 @@ export default makeScene2D(function* (view) {
     );
 
     // Text description of a variable
-    yield* chain(
-        waitUntil("Variables Intro"),
-        text("Python Variables\nin 5 Minutes", 1),
-        waitUntil("Lets Go Intro"),
-        text("Lets go", 1),
-        txtRef().opacity(0, 1)
-    );
+    yield* waitUntil("Variables Intro")
+    SoundEffects.writing();
+    yield* text("Python Variables\nin 5 Minutes", 1)
+    SoundEffects.writing();
+    yield* waitUntil("Lets Go Intro")
+    yield* text("Lets go", 1)
+    SoundEffects.letsgo(.25);
+    yield* txtRef().opacity(0, 1)
 
     // Display empty box
+    yield* waitUntil("Box Intro")
     yield* variableRef().declare("x");
 
     // Introduce value and assigment
     yield* waitUntil("Value Intro");
-    valueRef().position(variableRef().right().addX(100));
-    yield* valueRef().opacity(1, 1);
-
-    // Draw arrow, then move box
-    yield* variableRef().assign(valueRef());
+    yield* variableRef().assignValue('1');
 
     // Show code
     yield* waitUntil("Assignment Intro");
+    SoundEffects.intro();
     text("Assignment")
     txtRef().y(-350);
     codeRef().position([0, -200]);
@@ -79,16 +77,22 @@ export default makeScene2D(function* (view) {
 
     // Highlight from right to left
     yield* waitUntil("Read RL");
+    SoundEffects.click();
     yield* codeRef().selection(codeRef().findFirstRange('1'), 0.2);
+    SoundEffects.click();
     yield* codeRef().selection(codeRef().findFirstRange('='), 0.2);
+    SoundEffects.click();
     yield* codeRef().selection(codeRef().findFirstRange('x'), 0.2);
     yield* codeRef().selection(lines(-1), 0.2);
 
     yield* waitUntil("Highlight 1");
+    SoundEffects.click();
     yield* codeRef().selection(codeRef().findFirstRange('1'), 0.2);
     yield* waitUntil("Highlight =");
+    SoundEffects.click();
     yield* codeRef().selection(codeRef().findFirstRange('='), 0.2);
     yield* waitUntil("Highlight x");
+    SoundEffects.click();
     yield* codeRef().selection(codeRef().findFirstRange('x'), 0.2);
     yield* waitFor(.1);
     yield* codeRef().selection(DEFAULT, 0.2);
@@ -132,6 +136,7 @@ export default makeScene2D(function* (view) {
     // Invalid 
     tupperwareRef().position([350, exampleY]);
     potatoRef().position([-350, exampleY]);
+    SoundEffects.swap();
     yield* all(
         body(CODE`1 = x`, 1),
         tupperwareRef().opacity(1, 1),
@@ -171,6 +176,7 @@ function* arrowMove(view: View2D, source: Reference<any>, target: Reference<any>
     const moveSignal = createSignal(arrowStart);
     source().position(moveSignal);
     lineRef().points([moveSignal, arrowEnd]);
+    SoundEffects.move(.25);
     yield* moveSignal(arrowEnd, 1, easeInCubic);
     lineRef().remove();
 }

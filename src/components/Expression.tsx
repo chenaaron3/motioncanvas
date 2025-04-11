@@ -6,6 +6,7 @@ import {
 } from '@motion-canvas/core';
 
 import { Circumscribe } from './Circumscribe';
+import { SoundEffects } from './SoundEffects';
 import { Variable } from './Variable';
 
 export interface ExpressionProps extends CodeProps {
@@ -16,11 +17,13 @@ export class Expression extends Code {
         super(props);
     }
 
+    // Evaluate this expression
     *evaluate(code: SignalValue<PossibleCodeScope>) {
         const circ = new Circumscribe({
             target: this
         });
         yield* circ.create("yellow");
+        SoundEffects.eval(.25);
         // Collapses into the evaluated value
         yield* all(
             circ.destroy(),
@@ -53,13 +56,14 @@ export class Expression extends Code {
         /> as Rect;
         this.add(rect);
 
+        SoundEffects.eval(.25);
         // Highlight
         yield* all(
             variable.highlight(),
             rect.end(1, 1)
         )
 
-        // Evaluate
+        // Evaluate the variable
         yield* all(
             variable.unhighlight(),
             rect.start(1, 1),
@@ -69,7 +73,6 @@ export class Expression extends Code {
                 1,
             ),
         );
-
         this.removeChild(rect);
         rect.remove();
     }
